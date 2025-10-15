@@ -54,8 +54,11 @@ export default function App() {
       const endpoint = `https://classify.roboflow.com/${ROBOFLOW_MODEL}/${ROBOFLOW_VERSION}?api_key=${ROBOFLOW_API_KEY}`;
       const uploadResult = await FileSystem.uploadAsync(endpoint, uri, {
         httpMethod: 'POST',
-        // Prefer named export; fallback to object property if present
-        uploadType: (FileSystem.FileSystemUploadType || FileSystemUploadType).BINARY_CONTENT,
+        // Robustly resolve enum across SDK versions; fallback to 0 (BINARY_CONTENT)
+        uploadType:
+          (FileSystem?.FileSystemUploadType?.BINARY_CONTENT ??
+            FileSystemUploadType?.BINARY_CONTENT ??
+            0),
         headers: {
           'Content-Type': 'application/octet-stream',
         },
