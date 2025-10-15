@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { FileSystemUploadType } from 'expo-file-system';
 import { StatusBar } from 'expo-status-bar';
 
 const ROBOFLOW_MODEL = process.env.EXPO_PUBLIC_ROBOFLOW_MODEL || 'your-workspace/your-model';
@@ -53,7 +54,8 @@ export default function App() {
       const endpoint = `https://classify.roboflow.com/${ROBOFLOW_MODEL}/${ROBOFLOW_VERSION}?api_key=${ROBOFLOW_API_KEY}`;
       const uploadResult = await FileSystem.uploadAsync(endpoint, uri, {
         httpMethod: 'POST',
-        uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+        // Prefer named export; fallback to object property if present
+        uploadType: (FileSystem.FileSystemUploadType || FileSystemUploadType).BINARY_CONTENT,
         headers: {
           'Content-Type': 'application/octet-stream',
         },
